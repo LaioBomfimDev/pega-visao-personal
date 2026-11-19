@@ -66,7 +66,7 @@ function renderReview() {
   for (const row of section.rows) { const dt = document.createElement('dt'); dt.textContent = row.label; const dd = document.createElement('dd'); dd.textContent = row.value; dl.append(dt,dd); }
   card.append(dl); $('reviewContent').append(card);
  }
- $('deliveryNote').textContent = 'Suas respostas serão salvas na sua conta e ficarão disponíveis para Abel acompanhar seu atendimento.';
+ $('deliveryNote').textContent = 'Suas respostas serão salvas na sua conta e ficarão disponíveis para seu personal acompanhar seu atendimento.';
 }
 function goToStep(step) {
  if (busy || step < 1 || step > 5) return;
@@ -91,7 +91,7 @@ async function submitForm() {
   const response=await fetch('/api/entries',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':state.csrf},body:JSON.stringify({kind:'assessment',title:'Anamnese inicial',body:'Questionário preenchido pelo aluno.',payload:{sections:collect()}})});
   const result=await response.json(); if(!response.ok)throw new Error(result.error);
   document.querySelector('.main-container').hidden=true;document.querySelector('.bottom-nav').hidden=true;
-  $('successScreen').classList.add('show');$('successTitle').textContent='Anamnese salva';$('successMessage').textContent='Suas respostas foram salvas na sua conta e Abel foi notificado.';
+  $('successScreen').classList.add('show');$('successTitle').textContent='Anamnese salva';$('successMessage').textContent='Suas respostas foram salvas na sua conta e seu personal foi notificado.';
   $('downloadAgain').hidden=true;
   window.parent.postMessage({type:'assessment-saved'},location.origin);
  } catch(e) {error(e.message||'Não foi possível salvar. Suas respostas continuam aqui.');}

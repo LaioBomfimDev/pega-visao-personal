@@ -68,6 +68,38 @@ CREATE TABLE IF NOT EXISTS password_resets(token TEXT PRIMARY KEY,user_id INTEGE
    db().execute("UPDATE users SET professional_id=? WHERE role='student' AND professional_id IS NULL",(legacy['id'],))
    db().execute("UPDATE invites SET professional_id=? WHERE professional_id IS NULL AND role='student'",(legacy['id'],))
    db().execute("UPDATE entries SET professional_id=COALESCE((SELECT CASE WHEN role='admin' THEN id ELSE professional_id END FROM users WHERE id=entries.author),?) WHERE professional_id IS NULL",(legacy['id'],))
+  if 'tests-' not in str(DATA) and not one('SELECT id FROM users LIMIT 1'):
+   created_at=now()
+   insert('INSERT INTO users(name,email,password,role,mode,created,status) VALUES(?,?,?,?,?,?,?)',(
+    'Controlador Pega Visão',os.getenv('PEGA_SUPER_EMAIL','superadm@pegavisao.com'),
+    generate_password_hash(os.getenv('PEGA_SUPER_PASSWORD','SuperPega2026!')),'superadmin','On-line',created_at,'active'))
+   pid=insert('INSERT INTO users(name,email,password,role,mode,created,status) VALUES(?,?,?,?,?,?,?)',(
+    'Personal Pega Visão',os.getenv('PEGA_ADMIN_EMAIL','personal@pegavisao.com'),
+    generate_password_hash(os.getenv('PEGA_ADMIN_PASSWORD','PersonalPega2026!')),'admin','Presencial',created_at,'active'))
+   sid=insert('INSERT INTO users(name,email,password,role,mode,created,professional_id,status) VALUES(?,?,?,?,?,?,?,?)',(
+    'Lucas Andrade',os.getenv('PEGA_STUDENT_EMAIL','aluno@pegavisao.com'),
+    generate_password_hash(os.getenv('PEGA_STUDENT_PASSWORD','AlunoPega2026!')),'student','Presencial',created_at,pid,'active'))
+   sample_workout=normalize_workout({'days':[
+    {'id':'a','title':'Treino A — Peito, Ombro e Tríceps','weekdays':[0,3],'exercises':[
+     {'name':'Supino Reto com Barra','sets':'4','reps':'8 a 10','rest':'90s','notes':'Cadência controlada na descida'},
+     {'name':'Supino Inclinado com Halteres','sets':'4','reps':'10 a 12','rest':'75s','notes':'Amplitude máxima'},
+     {'name':'Desenvolvimento com Halteres','sets':'3','reps':'10','rest':'60s','notes':'Core firme'},
+     {'name':'Elevação Lateral','sets':'4','reps':'12 a 15','rest':'45s','notes':'Sem impulso de tronco'},
+     {'name':'Tríceps Pulley Corda','sets':'4','reps':'12','rest':'60s','notes':'Segurar 1s na contração final'}]},
+    {'id':'b','title':'Treino B — Costas, Bíceps e Core','weekdays':[1,4],'exercises':[
+     {'name':'Puxada Frontal Aberta','sets':'4','reps':'10','rest':'75s','notes':'Escápulas ativadas'},
+     {'name':'Remada Curvada Pronada','sets':'4','reps':'8 a 10','rest':'90s','notes':'Coluna neutra'},
+     {'name':'Remada Unilateral (Serrote)','sets':'3','reps':'12','rest':'60s','notes':''},
+     {'name':'Rosca Direta Barra W','sets':'4','reps':'10 a 12','rest':'60s','notes':''},
+     {'name':'Prancha Abdominal Isométrica','sets':'3','reps':'45s','rest':'45s','notes':''}]},
+    {'id':'c','title':'Treino C — Pernas e Glúteos (Força)','weekdays':[2,5],'exercises':[
+     {'name':'Agachamento Livre com Barra','sets':'4','reps':'8 a 10','rest':'120s','notes':'Boa profundidade'},
+     {'name':'Leg Press 45°','sets':'4','reps':'12','rest':'90s','notes':'Pés na largura dos ombros'},
+     {'name':'Stiff com Barra','sets':'4','reps':'10','rest':'90s','notes':'Alongar posteriores'},
+     {'name':'Cadeira Extensora','sets':'3','reps':'15','rest':'60s','notes':'Pico de contração no topo'},
+     {'name':'Panturrilha em Pé','sets':'4','reps':'15 a 20','rest':'45s','notes':''}]}]})
+   insert('INSERT INTO entries(kind,author,target,audience,title,body,payload,created,professional_id) VALUES(?,?,?,?,?,?,?,?,?)',(
+    'workout',pid,sid,'private','Protocolo Hipertrofia & Força — Pega Visão','Foco em progressão de carga semanal e controle de cadência. Registre as cargas utilizadas em cada sessão.',json.dumps(sample_workout,ensure_ascii=False),created_at,pid))
   db().commit()
 init()
 
@@ -180,7 +212,7 @@ def invite():
 def register():
  d=body();p=password(d);token=hashlib.sha256(text(d,'token',True,200).encode()).hexdigest()
  db().execute('BEGIN IMMEDIATE');inv=one('SELECT * FROM invites WHERE token=? AND used=0 AND expires>?',(token,now()))
- if not inv:abort(400,description='Convite inválido, utilizado ou expirado. Solicite outro a Abel.')
+ if not inv:abort(400,description='Convite inválido, utilizado ou expirado. Solicite outro ao seu personal.')
  if inv['role']=='student' and not one("SELECT id FROM users WHERE id=? AND status='active'",(inv['professional_id'],)):abort(403)
  uid=insert('INSERT INTO users(name,email,password,role,mode,created,professional_id,status) VALUES(?,?,?,?,?,?,?,?)',(inv['name'],inv['email'],p,inv['role'],inv['mode'],now(),inv['professional_id'],'pending' if inv['role']=='admin' else 'active'))
  db().execute('UPDATE invites SET used=1 WHERE id=?',(inv['id'],))
@@ -188,6 +220,15 @@ def register():
  db().commit()
  if inv['role']=='student':login({'id':uid})
  return jsonify(ok=True,pending=inv['role']=='admin')
+@app.post('/api/register-personal')
+def register_personal():
+ d=body();p=password(d);mail=email(d);name=text(d,'name',True,100);mode=text(d,'mode') or 'Presencial'
+ if mode not in ('On-line','Presencial'):mode='Presencial'
+ db().execute('BEGIN IMMEDIATE')
+ if one('SELECT id FROM users WHERE email=?',(mail,)):abort(409,description='Já existe uma conta com esse e-mail.')
+ uid=insert("INSERT INTO users(name,email,password,role,mode,created,status) VALUES(?,?,?,'admin',?,?,'active')",(name,mail,p,mode,now()))
+ notify([x['id'] for x in rows("SELECT id FROM users WHERE role='superadmin'")],'Novo Personal cadastrado: '+name,None)
+ db().commit();login({'id':uid});return jsonify(ok=True)
 @app.post('/api/password')
 def change_password():
  u=user();d=body();saved=one('SELECT password FROM users WHERE id=?',(u['id'],))
@@ -426,5 +467,5 @@ register_journey(app,sys.modules[__name__])
 
 if __name__=='__main__':
  from waitress import serve
- print('Abel Acompanhamento: http://'+os.getenv('ABEL_BIND','127.0.0.1')+':'+os.getenv('ABEL_PORT','8766'),flush=True)
+ print('Pega Visão Personal: http://'+os.getenv('ABEL_BIND','127.0.0.1')+':'+os.getenv('ABEL_PORT','8766'),flush=True)
  serve(app,host=os.getenv('ABEL_BIND','127.0.0.1'),port=int(os.getenv('ABEL_PORT','8766')))

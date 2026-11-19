@@ -8,7 +8,7 @@ from planning import workout_days
 
 def document_lines(entry, student, professional):
     payload = json.loads(entry['payload'])
-    lines = [('title', entry['title']), ('text', 'Abel | Acompanhamento'),
+    lines = [('title', entry['title']), ('text', 'Pega Visão Personal | Acompanhamento'),
              ('text', 'Aluno: ' + student), ('text', 'Profissional: ' + professional)]
     if entry['kind'] == 'workout':
         lines.append(('text', 'Versão ' + str(payload.get('version', 1)) + (' | Arquivada' if payload.get('active') is False else ' | Ativa')))
@@ -57,10 +57,10 @@ def make_pdf(lines):
     def footer(canvas, doc):
         canvas.setFont('Helvetica', 8)
         canvas.setFillColor(colors.HexColor('#666666'))
-        canvas.drawString(42, 25, 'Abel | Acompanhamento individual')
+        canvas.drawString(42, 25, 'Pega Visão Personal | Acompanhamento individual')
         canvas.drawRightString(A4[0] - 42, 25, str(doc.page))
     SimpleDocTemplate(buffer, pagesize=A4, rightMargin=42, leftMargin=42, topMargin=42, bottomMargin=46,
-                      title=lines[0][1], author='Abel Acompanhamento').build(content, onFirstPage=footer, onLaterPages=footer)
+                      title=lines[0][1], author='Pega Visão Personal').build(content, onFirstPage=footer, onLaterPages=footer)
     buffer.seek(0)
     return buffer
 
@@ -79,7 +79,7 @@ def make_docx(lines):
             doc.add_heading(text, 2)
         else:
             doc.add_paragraph(text)
-    doc.sections[0].footer.paragraphs[0].text = 'Abel | Acompanhamento individual'
+    doc.sections[0].footer.paragraphs[0].text = 'Pega Visão Personal | Acompanhamento individual'
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
@@ -99,4 +99,4 @@ def register(app, c):
             data, mime = make_pdf(lines), 'application/pdf'
         else:
             data, mime = make_docx(lines), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        return send_file(data, mimetype=mime, as_attachment=True, download_name=f'abel-registro-{eid}.{fmt}')
+        return send_file(data, mimetype=mime, as_attachment=True, download_name=f'pegavisao-registro-{eid}.{fmt}')
