@@ -1,0 +1,12 @@
+# Ignore local toolkit and virtual environments
+antigravity-kit/
+.venv/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.vercel/
+.env
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+session.key

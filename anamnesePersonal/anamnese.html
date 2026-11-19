@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anamnese – Consultoria Fitness Personalizada</title>
+  <meta name="description" content="Formulário de anamnese para elaboração do seu protocolo de treino individualizado. Preencha com atenção e receba seu plano em até 7 dias." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <!-- docx.js e FileSaver.js para gerar o arquivo Word -->
+  <script src="https://unpkg.com/docx@8.2.3/build/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    /* ============================================================
+       DESIGN SYSTEM / TOKENS
+    ============================================================ */
+    :root {
+      --bg:        #0f1117;
+      --bg-2:      #161b24;
+      --card:      #ffffff;
+      --card-2:    #f8f9fc;
+      --primary:   #f97316;       /* laranja vibrante */
+      --primary-h: #ea6a07;
+      --accent:    #3b82f6;       /* azul elétrico */
+      --txt-dark:  #1a1d27;
+      --txt-med:   #4b5563;
+      --txt-light: #9ca3af;
+      --border:    #e5e7eb;
+      --shadow:    0 4px 24px rgba(0,0,0,.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.14);
+      --radius:    14px;
+      --radius-sm: 8px;
+      --transition: .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--txt-dark);
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       HERO BANNER
+    ============================================================ */
+    .hero {
+      width: 100%;
+      aspect-ratio: 21/9;
+      position: relative;
+      overflow: hidden;
+      background: #0a0d14;
+    }
+    @media (max-width: 640px) { .hero { aspect-ratio: 16/9; } }
+
+    .hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,13,20,.15) 0%,
+        rgba(10,13,20,.55) 70%,
+        rgba(10,13,20,.92) 100%
+      );
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 2.5rem 1rem;
+      text-align: center;
+    }
+
+    .hero-tag {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: rgba(249,115,22,.12);
+      border: 1px solid rgba(249,115,22,.3);
+      padding: .3rem .9rem;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 5rem);
+      color: #fff;
+      line-height: 1.0;
+      letter-spacing: .04em;
+    }
+
+    .hero-title span { color: var(--primary); }
+
+    .hero-sub {
+      margin-top: .7rem;
+      font-size: clamp(.85rem, 1.8vw, 1.1rem);
+      color: rgba(255,255,255,.72);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    .hero-info-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-personal {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: clamp(.78rem, 1.6vw, .95rem);
+      font-weight: 600;
+      padding: .45rem 1rem;
+      border-radius: 99px;
+      letter-spacing: .01em;
+    }
+
+    .hero-personal .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .hero-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      background: rgba(37,211,102,.12);
+      border: 1px solid rgba(37,211,102,.35);
+      backdrop-filter: blur(8px);
+      color: #4ade80;
+      font-size: clamp(.78rem, 1.6vw, .95rem);
+      font-weight: 700;
+      padding: .45rem 1rem;
+      border-radius: 99px;
+      text-decoration: none;
+      transition: background var(--transition);
+    }
+
+    .hero-whatsapp:hover { background: rgba(37,211,102,.22); }
+
+    .hero-time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      background: rgba(249,115,22,.15);
+      border: 1px solid rgba(249,115,22,.4);
+      backdrop-filter: blur(8px);
+      color: var(--primary);
+      font-size: clamp(.75rem, 1.4vw, .88rem);
+      font-weight: 700;
+      padding: .45rem 1rem;
+      border-radius: 99px;
+      letter-spacing: .02em;
+    }
+
+    /* ============================================================
+       INTRO SECTION
+    ============================================================ */
+    .intro-wrap {
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      padding: 2.5rem 1rem 0;
+    }
+
+    .intro-card {
+      background: var(--bg-2);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      max-width: 760px;
+      width: 100%;
+      padding: 2rem 2.5rem;
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .intro-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+      margin-top: .1rem;
+    }
+
+    .intro-text p { color: rgba(255,255,255,.72); font-size: .95rem; line-height: 1.7; }
+    .intro-text strong { color: rgba(255,255,255,.9); }
+
+    .badge-time {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      margin-top: .9rem;
+      background: rgba(249,115,22,.1);
+      border: 1px solid rgba(249,115,22,.25);
+      color: var(--primary);
+      font-size: .8rem;
+      font-weight: 600;
+      padding: .3rem .75rem;
+      border-radius: 99px;
+    }
+
+    /* ============================================================
+       STEPPER NAV
+    ============================================================ */
+    .stepper-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 2.5rem 1rem 0;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      max-width: 760px;
+      width: 100%;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+      cursor: default;
+    }
+
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,.1);
+      z-index: 0;
+      transition: background var(--transition);
+    }
+    .step-item.completed:not(:last-child)::after { background: var(--primary); }
+
+    .step-circle {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.2);
+      background: var(--bg-2);
+      color: rgba(255,255,255,.4);
+      font-size: .8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      transition: all var(--transition);
+    }
+
+    .step-item.active .step-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 0 5px rgba(249,115,22,.2);
+    }
+
+    .step-item.completed .step-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .step-label {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.3);
+      margin-top: .5rem;
+      text-align: center;
+      transition: color var(--transition);
+    }
+
+    .step-item.active .step-label,
+    .step-item.completed .step-label { color: rgba(255,255,255,.75); }
+
+    /* ============================================================
+       FORM WRAPPER
+    ============================================================ */
+    .form-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    form { max-width: 760px; width: 100%; }
+
+    /* ============================================================
+       SECTION CARD
+    ============================================================ */
+    .section-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 2.5rem;
+      display: none;
+      animation: fadeUp .4s ease both;
+    }
+
+    .section-card.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-num {
+      width: 42px; height: 42px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--txt-dark);
+      letter-spacing: -.01em;
+    }
+
+    .section-header p {
+      font-size: .82rem;
+      color: var(--txt-light);
+      margin-top: .15rem;
+    }
+
+    /* ============================================================
+       FIELD GROUP
+    ============================================================ */
+    .field-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: .83rem;
+      font-weight: 600;
+      color: var(--txt-dark);
+      margin-bottom: .5rem;
+    }
+
+    .required-badge {
+      display: inline-block;
+      font-size: .67rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: rgba(249,115,22,.1);
+      padding: .1rem .4rem;
+      border-radius: 4px;
+      margin-left: .35rem;
+      vertical-align: middle;
+    }
+
+    /* ============================================================
+       INPUTS
+    ============================================================ */
+    .input, .textarea-input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: .75rem 1rem;
+      font-size: .9rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--txt-dark);
+      background: #fff;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+
+    .input:focus, .textarea-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(249,115,22,.15);
+    }
+
+    .input::placeholder, .textarea-input::placeholder { color: var(--txt-light); }
+
+    .textarea-input { resize: vertical; min-height: 100px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 540px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ============================================================
+       CHECKBOXES & RADIO (CUSTOM)
+    ============================================================ */
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: .6rem;
+    }
+
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: .7rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: .87rem;
+      color: var(--txt-med);
+      font-weight: 500;
+      transition: all var(--transition);
+      user-select: none;
+    }
+
+    .check-label:hover { border-color: var(--primary); color: var(--txt-dark); background: rgba(249,115,22,.04); }
+
+    .check-label input[type="checkbox"],
+    .check-label input[type="radio"] { display: none; }
+
+    .check-box {
+      width: 18px; height: 18px;
+      border-radius: 5px;
+      border: 2px solid var(--border);
+      background: #fff;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+
+    .check-label input[type="checkbox"]:checked ~ .check-box,
+    .check-label input[type="radio"]:checked ~ .check-box {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .check-label input[type="checkbox"]:checked ~ .check-box::after,
+    .check-label input[type="radio"]:checked ~ .check-box::after {
+      content: '';
+      width: 5px; height: 9px;
+      border: 2px solid #fff;
+      border-top: none; border-left: none;
+      transform: rotate(45deg) translateY(-1px);
+      display: block;
+    }
+
+    .check-label input[type="checkbox"]:checked ~ span:last-child,
+    .check-label input[type="radio"]:checked ~ span:last-child {
+      color: var(--txt-dark);
+      font-weight: 600;
+    }
+
+    .check-label:has(input:checked) {
+      border-color: var(--primary);
+      background: rgba(249,115,22,.05);
+    }
+
+    .radio-col { display: flex; flex-direction: column; gap: .55rem; }
+
+    /* ============================================================
+       PAIN SCALE
+    ============================================================ */
+    .pain-scale-wrap {
+      background: var(--card-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem 1.25rem .9rem;
+    }
+
+    .pain-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: .72rem;
+      color: var(--txt-light);
+      margin-bottom: .5rem;
+      font-weight: 500;
+    }
+
+    input[type="range"]#painScale {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 99px;
+      outline: none;
+      cursor: pointer;
+      background: linear-gradient(
+        to right,
+        var(--accent) 0%,
+        var(--primary) var(--val, 0%),
+        #e5e7eb var(--val, 0%)
+      );
+    }
+
+    input[type="range"]#painScale::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(249,115,22,.4);
+      cursor: pointer;
+      transition: transform var(--transition);
+    }
+
+    input[type="range"]#painScale::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+    .pain-val-display {
+      text-align: center;
+      margin-top: .75rem;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .pain-val-display span { font-size: .75rem; font-weight: 500; color: var(--txt-light); margin-left: .3rem; }
+
+    /* ============================================================
+       OUTRO INPUT (Checkbox com "Outro: ...")
+    ============================================================ */
+    .outro-wrap {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .7rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+    }
+    .outro-wrap:has(input[type="checkbox"]:checked), .outro-wrap:has(input[type="radio"]:checked) {
+      border-color: var(--primary);
+      background: rgba(249,115,22,.05);
+    }
+
+    .outro-cb { display: none; }
+    .outro-box {
+      width: 18px; height: 18px; border-radius: 5px;
+      border: 2px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition); cursor: pointer;
+    }
+    #outroObjCb:checked ~ .outro-box,
+    #outroSaudeCb:checked ~ .outro-box { background: var(--primary); border-color: var(--primary); }
+    #outroObjCb:checked ~ .outro-box::after,
+    #outroSaudeCb:checked ~ .outro-box::after {
+      content: ''; width: 5px; height: 9px;
+      border: 2px solid #fff; border-top: none; border-left: none;
+      transform: rotate(45deg) translateY(-1px); display: block;
+    }
+
+    .outro-text-input {
+      flex: 1; border: none; outline: none;
+      font-size: .87rem; font-family: 'Inter', sans-serif;
+      color: var(--txt-dark); background: transparent;
+    }
+    .outro-text-input::placeholder { color: var(--txt-light); }
+    .outro-prefix { font-size: .87rem; color: var(--txt-med); font-weight: 500; white-space: nowrap; }
+
+    /* ============================================================
+       NAVIGATION BUTTONS
+    ============================================================ */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1.5px solid var(--border);
+      gap: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .85rem 1.8rem;
+      border-radius: var(--radius-sm);
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--txt-med);
+    }
+    .btn-outline:hover { border-color: var(--txt-dark); color: var(--txt-dark); }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(249,115,22,.35);
+    }
+    .btn-primary:hover {
+      background: var(--primary-h);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(249,115,22,.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-ghost { background: transparent; color: var(--txt-light); font-size: .82rem; padding: .5rem 0; }
+
+    /* ============================================================
+       SUCCESS SCREEN
+    ============================================================ */
+    #successScreen {
+      display: none;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 3.5rem 2rem;
+      text-align: center;
+      animation: fadeUp .5s ease both;
+    }
+
+    #successScreen.show { display: block; }
+
+    .success-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      margin: 0 auto 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      box-shadow: 0 8px 32px rgba(34,197,94,.35);
+      animation: popIn .5s .2s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    #successScreen h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: .06em;
+      color: var(--txt-dark);
+      margin-bottom: .75rem;
+    }
+
+    #successScreen p {
+      color: var(--txt-med);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .success-highlight {
+      display: inline-block;
+      margin-top: 1.25rem;
+      background: rgba(249,115,22,.1);
+      border: 1px solid rgba(249,115,22,.25);
+      color: var(--primary);
+      font-weight: 700;
+      padding: .5rem 1.25rem;
+      border-radius: 99px;
+      font-size: .9rem;
+    }
+
+    /* ============================================================
+       PROGRESS BAR
+    ============================================================ */
+    .progress-bar-wrap {
+      max-width: 760px;
+      margin: 1rem auto 0;
+      padding: 0 1rem;
+    }
+
+    .progress-bar-bg {
+      height: 4px;
+      background: rgba(255,255,255,.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--accent), var(--primary));
+      border-radius: 99px;
+      transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: rgba(255,255,255,.25);
+      font-size: .75rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 600px) {
+      .section-card { padding: 1.5rem 1.25rem; }
+      .intro-card { padding: 1.25rem 1.25rem; flex-direction: column; gap: .75rem; }
+      .check-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       HERO BANNER
+  ============================================================ -->
+  <header class="hero">
+    <!--
+      BANNER: substitua o src abaixo pela URL ou caminho da sua imagem hero.
+      Proporção recomendada: 21:9 ou 16:9.
+    -->
+    <img
+      src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1920&q=80"
+      alt="Academia moderna com atleta treinando"
+    />
+    <div class="hero-overlay">
+      <div class="hero-tag">🏋️ Consultoria Personalizada</div>
+      <h1 class="hero-title">ANAMNESE – <span>CONSULTORIA</span><br>PERSONALIZADA</h1>
+      <p class="hero-sub">
+        Formulário fundamental para a elaboração do seu planejamento de treino individualizado.
+        Responda com atenção e sinceridade — todas as informações são confidenciais.
+      </p>
+      <div class="hero-info-row">
+        <span class="hero-personal">
+          <span class="dot"></span>
+          👤 Personal Trainer: <strong style="color:#fff;margin-left:.25rem">Abel Bomfim</strong>
+        </span>
+        <a
+          href="https://wa.me/5571996810310"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hero-whatsapp"
+          title="Fale com Abel Bomfim no WhatsApp"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp: (71) 99681-0310
+        </a>
+        <span class="hero-time-badge">
+          ⏱ Tempo de resposta médio do formulário: 5 a 10 minutos
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- INTRO CARD -->
+  <div class="intro-wrap">
+    <div class="intro-card">
+      <div class="intro-icon">💪</div>
+      <div class="intro-text">
+        <p>
+          <strong>Como funciona?</strong> Este formulário é dividido em 4 seções rápidas.
+          Após o preenchimento, seu protocolo de treino personalizado será elaborado e entregue em até
+          <strong>7 dias corridos</strong>. Todas as informações são tratadas com total confidencialidade.
+        </p>
+        <span class="badge-time">⏱ Tempo de resposta médio: 5–10 minutos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="stepper-wrap">
+    <nav class="stepper" aria-label="Progresso do formulário">
+      <div class="step-item active" data-step="1">
+        <div class="step-circle">1</div>
+        <span class="step-label">Identificação</span>
+      </div>
+      <div class="step-item" data-step="2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Objetivo</span>
+      </div>
+      <div class="step-item" data-step="3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Histórico</span>
+      </div>
+      <div class="step-item" data-step="4">
+        <div class="step-circle">4</div>
+        <span class="step-label">Saúde</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width:25%"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FORM
+  ============================================================ -->
+  <div class="form-wrap">
+    <form id="anamneseForm" novalidate>
+
+      <!-- =========================================================
+           SEÇÃO 1 – IDENTIFICAÇÃO
+      ========================================================= -->
+      <div class="section-card active" id="step1">
+        <div class="section-header">
+          <div class="section-num">1</div>
+          <div>
+            <h2>Identificação</h2>
+            <p>Dados pessoais básicos para o seu perfil</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field-group" style="grid-column:1/-1">
+            <label for="nomeCompleto">Nome completo <span class="required-badge">Obrigatório</span></label>
+            <input class="input" type="text" id="nomeCompleto" name="nomeCompleto" placeholder="Seu nome completo" required />
+          </div>
+
+          <div class="field-group">
+            <label for="idade">Idade <span class="required-badge">Obrigatório</span></label>
+            <input class="input" type="number" id="idade" name="idade" placeholder="Ex: 28" min="10" max="120" required />
+          </div>
+
+          <div class="field-group">
+            <label for="altura">Altura (cm) <span class="required-badge">Obrigatório</span></label>
+            <input class="input" type="number" id="altura" name="altura" placeholder="Ex: 175" min="100" max="250" required />
+          </div>
+
+          <div class="field-group">
+            <label for="peso">Peso atual (kg) <span class="required-badge">Obrigatório</span></label>
+            <input class="input" type="number" id="peso" name="peso" placeholder="Ex: 75.5" step="0.1" min="30" max="300" required />
+          </div>
+
+          <div class="field-group">
+            <label for="telefone">Telefone / WhatsApp <span class="required-badge">Obrigatório</span></label>
+            <input class="input" type="tel" id="telefone" name="telefone" placeholder="(00) 9 0000-0000" required />
+          </div>
+
+          <div class="field-group">
+            <label for="email">E-mail <span class="required-badge">Obrigatório</span></label>
+            <input class="input" type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required />
+          </div>
+
+          <div class="field-group" style="grid-column:1/-1">
+            <label for="profissao">Profissão</label>
+            <input class="input" type="text" id="profissao" name="profissao" placeholder="Sua profissão" />
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <span></span>
+          <button type="button" class="btn btn-primary" onclick="goToStep(2)">
+            Próximo: Objetivo <span>→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           SEÇÃO 2 – OBJETIVO
+      ========================================================= -->
+      <div class="section-card" id="step2">
+        <div class="section-header">
+          <div class="section-num">2</div>
+          <div>
+            <h2>Objetivo</h2>
+            <p>O que você quer alcançar com o treinamento?</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Principal objetivo <span class="required-badge">Obrigatório</span></label>
+          <div class="check-grid">
+            <label class="check-label">
+              <input type="checkbox" name="objetivo" value="Hipertrofia" />
+              <span class="check-box"></span>
+              <span>💪 Hipertrofia</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="objetivo" value="Emagrecimento" />
+              <span class="check-box"></span>
+              <span>🔥 Emagrecimento</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="objetivo" value="Definição muscular" />
+              <span class="check-box"></span>
+              <span>✂️ Definição muscular</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="objetivo" value="Condicionamento físico" />
+              <span class="check-box"></span>
+              <span>🏃 Condicionamento</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="objetivo" value="Reabilitação / redução de dor" />
+              <span class="check-box"></span>
+              <span>🩺 Reabilitação</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="objetivo" value="Performance esportiva" />
+              <span class="check-box"></span>
+              <span>🏅 Performance</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="objetivo" value="Saúde geral" />
+              <span class="check-box"></span>
+              <span>❤️ Saúde geral</span>
+            </label>
+            <div class="outro-wrap">
+              <input type="checkbox" id="outroObjCb" name="objetivo" value="Outro" class="outro-cb" />
+              <div class="outro-box" onclick="document.getElementById('outroObjCb').click()"></div>
+              <span class="outro-prefix">Outro:</span>
+              <input type="text" class="outro-text-input" id="outroObjText" placeholder="descreva..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="descObjetivo">Descreva em detalhes o que deseja alcançar <span class="required-badge">Obrigatório</span></label>
+          <textarea class="textarea-input" id="descObjetivo" name="descObjetivo" placeholder="Ex: Quero perder 10kg em 6 meses, ganhar massa nos braços e melhorar minha resistência para uma corrida de 10km..." required></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="prazoEvento">Existe prazo ou evento específico?</label>
+          <input class="input" type="text" id="prazoEvento" name="prazoEvento" placeholder="Ex: Casamento em julho, prova de corrida em maio..." />
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn btn-outline" onclick="goToStep(1)">← Anterior</button>
+          <button type="button" class="btn btn-primary" onclick="goToStep(3)">Próximo: Histórico →</button>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           SEÇÃO 3 – HISTÓRICO DE TREINAMENTO
+      ========================================================= -->
+      <div class="section-card" id="step3">
+        <div class="section-header">
+          <div class="section-num">3</div>
+          <div>
+            <h2>Histórico de Treinamento</h2>
+            <p>Sua experiência e histórico com exercícios</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Você treina atualmente? <span class="required-badge">Obrigatório</span></label>
+          <div class="radio-col" id="treinaAtual">
+            <label class="check-label">
+              <input type="radio" name="treinaAtual" value="Sim" />
+              <span class="check-box"></span>
+              <span>Sim</span>
+            </label>
+            <label class="check-label">
+              <input type="radio" name="treinaAtual" value="Não" />
+              <span class="check-box"></span>
+              <span>Não</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field-group">
+            <label for="tempoTreino">Se sim, há quanto tempo treina?</label>
+            <input class="input" type="text" id="tempoTreino" name="tempoTreino" placeholder="Ex: 2 anos, 6 meses..." />
+          </div>
+
+          <div class="field-group">
+            <label for="freqTreino">Quantas vezes por semana?</label>
+            <input class="input" type="text" id="freqTreino" name="freqTreino" placeholder="Ex: 3x por semana" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Já teve acompanhamento profissional?</label>
+          <div class="radio-col">
+            <label class="check-label">
+              <input type="radio" name="acompanhamento" value="Sim" />
+              <span class="check-box"></span>
+              <span>Sim</span>
+            </label>
+            <label class="check-label">
+              <input type="radio" name="acompanhamento" value="Não" />
+              <span class="check-box"></span>
+              <span>Não</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Já sofreu alguma lesão relacionada a treino? <span class="required-badge">Obrigatório</span></label>
+          <div class="radio-col">
+            <label class="check-label">
+              <input type="radio" name="lesao" value="Sim" />
+              <span class="check-box"></span>
+              <span>Sim</span>
+            </label>
+            <label class="check-label">
+              <input type="radio" name="lesao" value="Não" />
+              <span class="check-box"></span>
+              <span>Não</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="descLesao">Se sim, descreva qual lesão e quando ocorreu:</label>
+          <textarea class="textarea-input" id="descLesao" name="descLesao" placeholder="Ex: Lesão no joelho direito em 2022, cirurgia de menisco..."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="exercicioDor">Existe algum exercício que cause dor ou desconforto?</label>
+          <textarea class="textarea-input" id="exercicioDor" name="exercicioDor" placeholder="Ex: Agachamento causa dor no joelho, supino causa dor no ombro..."></textarea>
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn btn-outline" onclick="goToStep(2)">← Anterior</button>
+          <button type="button" class="btn btn-primary" onclick="goToStep(4)">Próximo: Saúde →</button>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           SEÇÃO 4 – SAÚDE + ENVIO
+      ========================================================= -->
+      <div class="section-card" id="step4">
+        <div class="section-header">
+          <div class="section-num">4</div>
+          <div>
+            <h2>Saúde & Observações Finais</h2>
+            <p>Informações clínicas e liberação médica</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Possui alguma condição diagnosticada?</label>
+          <div class="check-grid">
+            <label class="check-label">
+              <input type="checkbox" name="condicao" value="Problema na coluna" />
+              <span class="check-box"></span>
+              <span>🦴 Problema na coluna</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="condicao" value="Lesão articular" />
+              <span class="check-box"></span>
+              <span>🦵 Lesão articular</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="condicao" value="Hipertensão" />
+              <span class="check-box"></span>
+              <span>🩺 Hipertensão</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="condicao" value="Diabetes" />
+              <span class="check-box"></span>
+              <span>💉 Diabetes</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="condicao" value="Problema cardíaco" />
+              <span class="check-box"></span>
+              <span>❤️ Problema cardíaco</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="condicao" value="Problema respiratório" />
+              <span class="check-box"></span>
+              <span>🫁 Problema respiratório</span>
+            </label>
+            <label class="check-label">
+              <input type="checkbox" name="condicao" value="Nenhuma" />
+              <span class="check-box"></span>
+              <span>✅ Nenhuma</span>
+            </label>
+            <div class="outro-wrap">
+              <input type="checkbox" id="outroSaudeCb" name="condicao" value="Outro" class="outro-cb" />
+              <div class="outro-box" onclick="document.getElementById('outroSaudeCb').click()"></div>
+              <span class="outro-prefix">Outro:</span>
+              <input type="text" class="outro-text-input" id="outroSaudeText" placeholder="descreva..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="medicamento">Faz uso de medicamento contínuo?</label>
+          <input class="input" type="text" id="medicamento" name="medicamento" placeholder="Ex: Losartana, metformina, omeprazol... ou 'Não'" />
+        </div>
+
+        <div class="field-group">
+          <label>Sente dores atualmente?</label>
+          <div class="radio-col">
+            <label class="check-label">
+              <input type="radio" name="senteDor" value="Sim" />
+              <span class="check-box"></span>
+              <span>Sim</span>
+            </label>
+            <label class="check-label">
+              <input type="radio" name="senteDor" value="Não" />
+              <span class="check-box"></span>
+              <span>Não</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="localDor">Se sim, onde sente dor?</label>
+          <input class="input" type="text" id="localDor" name="localDor" placeholder="Ex: Lombar, joelho direito, ombro esquerdo..." />
+        </div>
+
+        <!-- Pain Scale -->
+        <div class="field-group">
+          <label>Intensidade da dor (0 = nenhuma dor / 10 = dor máxima)</label>
+          <div class="pain-scale-wrap">
+            <div class="pain-labels">
+              <span>0 – Nenhuma</span>
+              <span>5 – Moderada</span>
+              <span>10 – Máxima</span>
+            </div>
+            <input
+              type="range"
+              id="painScale"
+              name="intensidadeDor"
+              min="0" max="10" step="1" value="0"
+            />
+            <div class="pain-val-display">
+              <span id="painVal">0</span>
+              <span>/ 10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Já foi liberado(a) por médico para praticar exercícios?</label>
+          <div class="radio-col">
+            <label class="check-label">
+              <input type="radio" name="liberadoMedico" value="Sim" />
+              <span class="check-box"></span>
+              <span>Sim</span>
+            </label>
+            <label class="check-label">
+              <input type="radio" name="liberadoMedico" value="Não" />
+              <span class="check-box"></span>
+              <span>Não</span>
+            </label>
+            <label class="check-label">
+              <input type="radio" name="liberadoMedico" value="Não sei" />
+              <span class="check-box"></span>
+              <span>Não sei</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="observacoes">Espaço livre – Alguma informação importante não abordada?</label>
+          <textarea
+            class="textarea-input"
+            id="observacoes"
+            name="observacoes"
+            style="min-height:120px"
+            placeholder="Fique à vontade para compartilhar qualquer detalhe relevante para a elaboração do seu protocolo..."
+          ></textarea>
+        </div>
+
+        <!-- SUBMIT INFO -->
+        <div style="
+          background:#f0fdf4;
+          border:1.5px solid #bbf7d0;
+          border-radius:var(--radius-sm);
+          padding:1rem 1.25rem;
+          margin-bottom:1.5rem;
+          font-size:.85rem;
+          color:#166534;
+          line-height:1.6;
+        ">
+          ✅ Após o envio, seu protocolo de treino personalizado será elaborado e entregue em até <strong>7 dias corridos</strong>.
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn btn-outline" onclick="goToStep(3)">← Anterior</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            ✉️ Enviar Anamnese
+          </button>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           SUCCESS SCREEN
+      ========================================================= -->
+      <div id="successScreen">
+        <div class="success-icon">✓</div>
+        <h2>Protocolo Recebido!</h2>
+        <p>
+          Seus dados foram enviados com sucesso.<br />
+          Seu treino personalizado será elaborado e entregue em até
+          <strong>7 dias corridos</strong> no e-mail informado.
+        </p>
+        <div class="success-highlight">🏋️ Prepare-se para os resultados!</div>
+      </div>
+
+    </form>
+  </div>
+
+  <footer>
+    © 2025 Consultoria Fitness Personalizada · Todos os dados são confidenciais
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // ============================================================
+    // STATE – todos os campos do formulário
+    // ============================================================
+    let currentStep = 1;
+    const TOTAL_STEPS = 4;
+
+    const formState = {
+      // Seção 1
+      nomeCompleto: '',
+      idade: '',
+      altura: '',
+      peso: '',
+      telefone: '',
+      email: '',
+      profissao: '',
+      // Seção 2
+      objetivo: [],          // array de checkboxes
+      outroObjetivo: '',
+      descObjetivo: '',
+      prazoEvento: '',
+      // Seção 3
+      treinaAtual: '',
+      tempoTreino: '',
+      freqTreino: '',
+      acompanhamento: '',
+      lesao: '',
+      descLesao: '',
+      exercicioDor: '',
+      // Seção 4
+      condicao: [],          // array de checkboxes
+      outroCondicao: '',
+      medicamento: '',
+      senteDor: '',
+      localDor: '',
+      intensidadeDor: 0,
+      liberadoMedico: '',
+      observacoes: ''
+    };
+
+    // ============================================================
+    // PAIN SCALE – update visual gradient
+    // ============================================================
+    const painSlider = document.getElementById('painScale');
+    const painValEl  = document.getElementById('painVal');
+
+    function updatePainScale() {
+      const val = parseInt(painSlider.value);
+      const pct = (val / 10) * 100;
+      painSlider.style.setProperty('--val', pct + '%');
+      painValEl.textContent = val;
+      formState.intensidadeDor = val;
+    }
+
+    painSlider.addEventListener('input', updatePainScale);
+    updatePainScale();
+
+    // ============================================================
+    // STEP NAVIGATION
+    // ============================================================
+    function goToStep(step) {
+      if (step < 1 || step > TOTAL_STEPS) return;
+
+      // Collect current step data before leaving
+      collectStepData(currentStep);
+
+      // Validate required fields on current step before advancing
+      if (step > currentStep && !validateStep(currentStep)) return;
+
+      // Hide current, show next
+      document.getElementById(`step${currentStep}`)?.classList.remove('active');
+      document.getElementById(`step${step}`)?.classList.add('active');
+
+      // Update stepper
+      document.querySelectorAll('.step-item').forEach(el => {
+        const n = parseInt(el.dataset.step);
+        el.classList.remove('active', 'completed');
+        if (n === step)    el.classList.add('active');
+        if (n <  step)     el.classList.add('completed');
+      });
+
+      // Update progress bar
+      const pct = (step / TOTAL_STEPS) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+
+      currentStep = step;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============================================================
+    // COLLECT DATA FROM EACH STEP
+    // ============================================================
+    function collectStepData(step) {
+      if (step === 1) {
+        formState.nomeCompleto  = document.getElementById('nomeCompleto').value.trim();
+        formState.idade         = document.getElementById('idade').value;
+        formState.altura        = document.getElementById('altura').value;
+        formState.peso          = document.getElementById('peso').value;
+        formState.telefone      = document.getElementById('telefone').value.trim();
+        formState.email         = document.getElementById('email').value.trim();
+        formState.profissao     = document.getElementById('profissao').value.trim();
+      }
+      if (step === 2) {
+        formState.objetivo = Array.from(
+          document.querySelectorAll('input[name="objetivo"]:checked')
+        ).map(cb => cb.value === 'Outro'
+          ? `Outro: ${document.getElementById('outroObjText').value}`
+          : cb.value
+        );
+        formState.descObjetivo = document.getElementById('descObjetivo').value.trim();
+        formState.prazoEvento  = document.getElementById('prazoEvento').value.trim();
+      }
+      if (step === 3) {
+        const treinaRadio = document.querySelector('input[name="treinaAtual"]:checked');
+        formState.treinaAtual   = treinaRadio ? treinaRadio.value : '';
+        formState.tempoTreino   = document.getElementById('tempoTreino').value.trim();
+        formState.freqTreino    = document.getElementById('freqTreino').value.trim();
+        const acompRadio = document.querySelector('input[name="acompanhamento"]:checked');
+        formState.acompanhamento = acompRadio ? acompRadio.value : '';
+        const lesaoRadio = document.querySelector('input[name="lesao"]:checked');
+        formState.lesao          = lesaoRadio ? lesaoRadio.value : '';
+        formState.descLesao      = document.getElementById('descLesao').value.trim();
+        formState.exercicioDor   = document.getElementById('exercicioDor').value.trim();
+      }
+      if (step === 4) {
+        formState.condicao = Array.from(
+          document.querySelectorAll('input[name="condicao"]:checked')
+        ).map(cb => cb.value === 'Outro'
+          ? `Outro: ${document.getElementById('outroSaudeText').value}`
+          : cb.value
+        );
+        formState.medicamento   = document.getElementById('medicamento').value.trim();
+        const dorRadio = document.querySelector('input[name="senteDor"]:checked');
+        formState.senteDor      = dorRadio ? dorRadio.value : '';
+        formState.localDor      = document.getElementById('localDor').value.trim();
+        formState.intensidadeDor= parseInt(painSlider.value);
+        const medRadio = document.querySelector('input[name="liberadoMedico"]:checked');
+        formState.liberadoMedico = medRadio ? medRadio.value : '';
+        formState.observacoes   = document.getElementById('observacoes').value.trim();
+      }
+    }
+
+    // ============================================================
+    // VALIDATION
+    // ============================================================
+    function validateStep(step) {
+      const errors = [];
+
+      if (step === 1) {
+        if (!document.getElementById('nomeCompleto').value.trim()) errors.push('Nome completo');
+        if (!document.getElementById('idade').value)                errors.push('Idade');
+        if (!document.getElementById('altura').value)               errors.push('Altura');
+        if (!document.getElementById('peso').value)                 errors.push('Peso');
+        if (!document.getElementById('telefone').value.trim())      errors.push('Telefone');
+        const emailVal = document.getElementById('email').value.trim();
+        if (!emailVal || !/\S+@\S+\.\S+/.test(emailVal))           errors.push('E-mail válido');
+      }
+
+      if (step === 2) {
+        const objs = document.querySelectorAll('input[name="objetivo"]:checked');
+        if (objs.length === 0) errors.push('Ao menos um objetivo');
+        if (!document.getElementById('descObjetivo').value.trim()) errors.push('Descrição do objetivo');
+      }
+
+      if (step === 3) {
+        if (!document.querySelector('input[name="treinaAtual"]:checked')) errors.push('Se treina atualmente');
+        if (!document.querySelector('input[name="lesao"]:checked'))       errors.push('Histórico de lesão');
+      }
+
+      if (errors.length > 0) {
+        showToast(`⚠️ Preencha: ${errors.join(', ')}`);
+        return false;
+      }
+      return true;
+    }
+
+    // ============================================================
+    // TOAST NOTIFICATION
+    // ============================================================
+    function showToast(msg) {
+      const existing = document.getElementById('toast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.textContent = msg;
+      Object.assign(toast.style, {
+        position: 'fixed',
+        bottom: '1.5rem',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: '#1a1d27',
+        color: '#fff',
+        padding: '.75rem 1.5rem',
+        borderRadius: '8px',
+        fontSize: '.875rem',
+        fontWeight: '600',
+        zIndex: '9999',
+        boxShadow: '0 4px 20px rgba(0,0,0,.35)',
+        border: '1px solid rgba(249,115,22,.4)',
+        whiteSpace: 'nowrap',
+        animation: 'fadeUp .3s ease'
+      });
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    // ============================================================
+    // HANDLE SUBMIT
+    // ============================================================
+    // ============================================================
+    // ⚙️ EMAILJS CONFIG
+    // Passo a passo:
+    //  1. Acesse https://www.emailjs.com e crie uma conta GRATUITA
+    //  2. Em "Email Services", conecte seu Gmail (abelbomfim14@gmail.com)
+    //     → anote o SERVICE_ID gerado (ex: "service_abc123")
+    //  3. Em "Email Templates", crie um template com as variáveis:
+    //     {{nome}}, {{email}}, {{telefone}}, {{objetivo}}, {{descObjetivo}},
+    //     {{treinaAtual}}, {{lesao}}, {{condicao}}, {{intensidadeDor}},
+    //     {{liberadoMedico}}, {{observacoes}} — e defina To: abelbomfim14@gmail.com
+    //     → anote o TEMPLATE_ID gerado (ex: "template_xyz789")
+    //  4. Em "Account" > "Public Key", copie sua chave pública
+    //     → anote a PUBLIC_KEY
+    //  5. Substitua os 3 valores abaixo e salve. Pronto! ✅
+    // ============================================================
+    const EMAILJS_PUBLIC_KEY  = 'SUA_PUBLIC_KEY';   // ← cole aqui
+    const EMAILJS_SERVICE_ID  = 'SUA_SERVICE_ID';   // ← cole aqui
+    const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID';  // ← cole aqui
+
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+
+    document.getElementById('anamneseForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      collectStepData(4);
+      if (!validateStep(4)) return;
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:.5rem">⏳ Enviando anamnese...</span>';
+
+      // Monta objeto de template para o EmailJS
+      const templateParams = {
+        // --- Identificação ---
+        nome:            formState.nomeCompleto,
+        idade:           formState.idade,
+        altura:          formState.altura + ' cm',
+        peso:            formState.peso + ' kg',
+        telefone:        formState.telefone,
+        email:           formState.email,
+        profissao:       formState.profissao   || '—',
+        // --- Objetivo ---
+        objetivo:        formState.objetivo.join(', ') || '—',
+        descObjetivo:    formState.descObjetivo,
+        prazoEvento:     formState.prazoEvento  || '—',
+        // --- Histórico ---
+        treinaAtual:     formState.treinaAtual,
+        tempoTreino:     formState.tempoTreino  || '—',
+        freqTreino:      formState.freqTreino   || '—',
+        acompanhamento:  formState.acompanhamento || '—',
+        lesao:           formState.lesao,
+        descLesao:       formState.descLesao    || '—',
+        exercicioDor:    formState.exercicioDor  || '—',
+        // --- Saúde ---
+        condicao:        formState.condicao.join(', ') || '—',
+        medicamento:     formState.medicamento   || '—',
+        senteDor:        formState.senteDor      || '—',
+        localDor:        formState.localDor      || '—',
+        intensidadeDor:  formState.intensidadeDor + '/10',
+        liberadoMedico:  formState.liberadoMedico || '—',
+        observacoes:     formState.observacoes    || '—'
+      };
+
+      // Função utilitária para gerar e baixar o gerador de DOCX formatado
+      function generateAndDownloadWord() {
+        const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
+
+        const doc = new Document({
+          creator: "Consultoria Personalizada - Abel Bomfim",
+          title: "Ficha Anamnese - " + formState.nomeCompleto,
+          description: "Anamnese detalhada exportada do sistema SPA",
+          styles: {
+            paragraphStyles: [
+              {
+                id: "Heading1",
+                name: "Heading 1",
+                basedOn: "Normal",
+                next: "Normal",
+                quickFormat: true,
+                run: { color: "EA580C", size: 36, bold: true },
+                paragraph: { spacing: { before: 240, after: 120 } }
+              },
+              {
+                id: "Heading2",
+                name: "Heading 2",
+                basedOn: "Normal",
+                next: "Normal",
+                quickFormat: true,
+                run: { color: "1E3A8A", size: 28, bold: true },
+                paragraph: { spacing: { before: 240, after: 120 }, border: { bottom: { color: "auto", space: 1, style: "single", size: 6 } } }
+              }
+            ]
+          },
+          sections: [{
+            properties: {},
+            children: [
+              new Paragraph({
+                text: "FICHA DE ANAMNESE COMPLETA",
+                heading: HeadingLevel.HEADING_1,
+                alignment: docx.AlignmentType.CENTER
+              }),
+              new Paragraph({
+                children: [new TextRun({ text: "Gerado automaticamente pelo aplicativo. Personal Trainer: Abel Bomfim", italics: true, color: "666666" })],
+                alignment: docx.AlignmentType.CENTER,
+                spacing: { after: 400 }
+              }),
+
+              // ------------------------------------------ SEÇÃO 1
+              new Paragraph({ text: "1. IDENTICAÇÃO DO ALUNO", heading: HeadingLevel.HEADING_2 }),
+              new Paragraph({ children: [new TextRun({ text: "Nome Completo: ", bold: true }), new TextRun(templateParams.nome)] }),
+              new Paragraph({ children: [new TextRun({ text: "Idade: ", bold: true }), new TextRun(templateParams.idade + " anos")] }),
+              new Paragraph({ children: [new TextRun({ text: "E-mail: ", bold: true }), new TextRun(templateParams.email)] }),
+              new Paragraph({ children: [new TextRun({ text: "Telefone / WhatsApp: ", bold: true }), new TextRun(templateParams.telefone)] }),
+              new Paragraph({ children: [new TextRun({ text: "Peso atual: ", bold: true }), new TextRun(templateParams.peso)] }),
+              new Paragraph({ children: [new TextRun({ text: "Altura: ", bold: true }), new TextRun(templateParams.altura)] }),
+              new Paragraph({ children: [new TextRun({ text: "Profissão: ", bold: true }), new TextRun(templateParams.profissao)], spacing: { after: 200 } }),
+
+              // ------------------------------------------ SEÇÃO 2
+              new Paragraph({ text: "2. OBJETIVOS", heading: HeadingLevel.HEADING_2 }),
+              new Paragraph({ children: [new TextRun({ text: "Principais Objetivos: ", bold: true }), new TextRun(templateParams.objetivo)] }),
+              new Paragraph({ children: [new TextRun({ text: "Descrição detalhada: ", bold: true }), new TextRun(templateParams.descObjetivo)] }),
+              new Paragraph({ children: [new TextRun({ text: "Prazo/Evento: ", bold: true }), new TextRun(templateParams.prazoEvento)], spacing: { after: 200 } }),
+
+              // ------------------------------------------ SEÇÃO 3
+              new Paragraph({ text: "3. HISTÓRICO DE TREINAMENTO", heading: HeadingLevel.HEADING_2 }),
+              new Paragraph({ children: [new TextRun({ text: "Treina Atualmente: ", bold: true }), new TextRun(templateParams.treinaAtual)] }),
+              new Paragraph({ children: [new TextRun({ text: "Há quanto tempo: ", bold: true }), new TextRun(templateParams.tempoTreino)] }),
+              new Paragraph({ children: [new TextRun({ text: "Frequência Semanal: ", bold: true }), new TextRun(templateParams.freqTreino)] }),
+              new Paragraph({ children: [new TextRun({ text: "Acompanhamento profissional prévio: ", bold: true }), new TextRun(templateParams.acompanhamento)] }),
+              new Paragraph({ children: [new TextRun({ text: "Já sofreu lesão: ", bold: true }), new TextRun(templateParams.lesao)] }),
+              new Paragraph({ children: [new TextRun({ text: "Descrição da lesão: ", bold: true }), new TextRun(templateParams.descLesao)] }),
+              new Paragraph({ children: [new TextRun({ text: "Exercícios com dor/desconforto: ", bold: true }), new TextRun(templateParams.exercicioDor)], spacing: { after: 200 } }),
+
+              // ------------------------------------------ SEÇÃO 4
+              new Paragraph({ text: "4. AVALIAÇÃO DE SAÚDE", heading: HeadingLevel.HEADING_2 }),
+              new Paragraph({ children: [new TextRun({ text: "Condições médicas diagnosticadas: ", bold: true }), new TextRun(templateParams.condicao)] }),
+              new Paragraph({ children: [new TextRun({ text: "Liberação Médica: ", bold: true }), new TextRun(templateParams.liberadoMedico)] }),
+              new Paragraph({ children: [new TextRun({ text: "Uso de Medicamentos: ", bold: true }), new TextRun(templateParams.medicamento)] }),
+              new Paragraph({ children: [new TextRun({ text: "Sente dores atualmente: ", bold: true }), new TextRun(templateParams.senteDor)] }),
+              new Paragraph({ children: [new TextRun({ text: "Local da Dor: ", bold: true }), new TextRun(templateParams.localDor)] }),
+              new Paragraph({ children: [new TextRun({ text: "Intensidade da Dor (0-10): ", bold: true }), new TextRun(templateParams.intensidadeDor)] }),
+              new Paragraph({ children: [new TextRun({ text: "Informações Extra (Observações Livres): ", bold: true })] }),
+              new Paragraph({ text: templateParams.observacoes, spacing: { after: 400 } })
+            ]
+          }]
+        });
+
+        // Converte o DOCX processado para blob e usa FileSaver para baixar
+        Packer.toBlob(doc).then(blob => {
+          const fileName = `Anamnese_${formState.nomeCompleto.replace(/\s+/g, '_')}.docx`;
+          saveAs(blob, fileName);
+          showSuccess(); // Mostra sucesso na tela após gerar o download
+        });
+      }
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(function() {
+          generateAndDownloadWord(); // E-mail enviou, faz o download do DOCX local
+        })
+        .catch(function(error) {
+          console.error('Erro EmailJS:', error);
+          if (EMAILJS_PUBLIC_KEY === 'SUA_PUBLIC_KEY') {
+            showToast('⚠️ Para o autor: Configure o EmailJS para receber por e-mail.');
+            // Simulando sucesso offline (só vai baixar o Word diretamente)
+            setTimeout(() => generateAndDownloadWord(), 1200);
+          } else {
+            btn.disabled = false;
+            btn.innerHTML = '✉️ Enviar Anamnese';
+            showToast('❌ Erro ao enviar. Verifique sua conexão e tente novamente.');
+          }
+        });
+    });
+
+    function showSuccess() {
+      // Esconde todos os steps
+      document.querySelectorAll('.section-card').forEach(c => c.classList.remove('active'));
+      document.querySelector('.stepper-wrap').style.display = 'none';
+      document.querySelector('.progress-bar-wrap').style.display = 'none';
+
+      // Mostra sucesso
+      document.getElementById('successScreen').classList.add('show');
+
+      // Log dos dados coletados (checar no console para integrar com API)
+      console.log('📋 Dados da Anamnese:', formState);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============================================================
+    // Stepper click visual (accessibility)
+    // ============================================================
+    document.querySelectorAll('.step-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const n = parseInt(el.dataset.step);
+        if (n < currentStep) goToStep(n);
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anamnese – Abel Bomfim</title>
+  <meta name="description" content="Anamnese para protocolo de treino individualizado." />
+  
+  
+  
+  
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- SDKs (EmailJS, docx, FileSaver) -->
+  
+  
+
+<link rel="stylesheet" href="/static/motion.css"><script src="/static/motion.js" defer></script></head>
+<body>
+
+  <!-- BACKGROUND -->
+  <div class="bg-gradient"></div>
+
+  <!-- PROGRESS HEADER FLOAT -->
+  <header class="top-header">
+    <div class="header-titles">
+      <div class="personal-badge">
+        <div class="avatar-dot"></div>
+        Abel Bomfim
+      </div>
+      <h1>Sua Anamnese</h1>
+    </div>
+    
+    <div class="progress-wrap">
+      <div class="progress-tabs">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+        <div class="step-dot" data-step="4"></div><div class="step-dot" data-step="5"></div>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:20%"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FORM CONTAINER -->
+  <main class="main-container">
+    <noscript>Ative o JavaScript para preencher a anamnese.</noscript><div id="formError" role="alert" tabindex="-1" hidden></div><form id="anamneseForm" novalidate>
+
+      <!-- ==================== STEP 1: IDENTIFICAÇÃO ==================== -->
+      <div class="step-pane active" id="step1">
+        <div class="pane-header staggered">
+          <h2>Seu treino começa com a sua história</h2>
+          <p>Na consultoria on-line ou no atendimento presencial, quero conhecer seus objetivos, sua rotina e sua experiência. Preencha com atenção e revise antes de concluir. Os campos com * são obrigatórios.</p>
+        </div>
+
+<fieldset class="field-group"><legend>Como será seu acompanhamento? *</legend><div class="radio-pill-group"><label class="pill"><input type="radio" name="modalidade" value="On-line"><span class="pill-ui">Consultoria on-line</span></label><label class="pill"><input type="radio" name="modalidade" value="Presencial"><span class="pill-ui">Presencial</span></label></div></fieldset>        <div class="field-group staggered">
+          <label for="nomeCompleto">Nome completo *</label>
+          <input class="input-base" type="text" id="nomeCompleto" placeholder="Digite seu nome completo" required />
+        </div>
+
+        <div class="grid-2 staggered">
+          <div class="field-group">
+            <label for="idade">Idade *</label>
+            <input class="input-base" type="number" id="idade" min="1" max="120" step="1" placeholder="Ex: 28" required />
+          </div>
+          <div class="field-group">
+            <label for="peso">Peso (kg) *</label>
+            <input class="input-base" type="number" id="peso" min="1" max="500" placeholder="Ex: 75.5" step="0.1" required />
+          </div>
+        </div>
+
+        <div class="grid-2 staggered">
+          <div class="field-group">
+            <label for="altura">Altura (cm) *</label>
+            <input class="input-base" type="number" id="altura" min="30" max="260" step="1" placeholder="Ex: 175" required />
+          </div>
+          <div class="field-group">
+            <label for="telefone">WhatsApp *</label>
+            <input class="input-base" type="tel" id="telefone" placeholder="(11) 90000-0000" required />
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label for="email">E-mail *</label>
+          <input class="input-base" type="email" id="email" placeholder="seuemail@exemplo.com" required />
+        </div>
+
+        <div class="field-group staggered">
+          <label for="profissao">Sua Profissão</label>
+          <input class="input-base" type="text" id="profissao" placeholder="Ex: Advogado, Estudante..." />
+        </div>
+      </div>
+
+      <!-- ==================== STEP 2: OBJETIVO ==================== -->
+      <div class="step-pane" id="step2">
+        <div class="pane-header staggered">
+          <h2>Seu Objetivo</h2>
+          <p>Aonde você quer chegar com o treinamento?</p>
+        </div>
+
+        <div class="field-group staggered">
+          <label>O que você busca? (Pode marcar mais de um) *</label>
+          <div class="checkbox-list">
+            <label class="custom-check">
+              <input type="checkbox" name="objetivo" value="Hipertrofia" />
+              <div class="check-ui"></div>
+              <span class="check-text">💪 Hipertrofia musc.</span>
+            </label>
+            <label class="custom-check">
+              <input type="checkbox" name="objetivo" value="Emagrecimento" />
+              <div class="check-ui"></div>
+              <span class="check-text">🔥 Emagrecimento</span>
+            </label>
+            <label class="custom-check">
+              <input type="checkbox" name="objetivo" value="Definição" />
+              <div class="check-ui"></div>
+              <span class="check-text">✂️ Definição corporal</span>
+            </label>
+            <label class="custom-check">
+              <input type="checkbox" name="objetivo" value="Condicionamento" />
+              <div class="check-ui"></div>
+              <span class="check-text">🏃 Condicionamento</span>
+            </label>
+            <label class="custom-check">
+              <input type="checkbox" name="objetivo" value="Saúde Geral" />
+              <div class="check-ui"></div>
+              <span class="check-text">❤️ Melhoria de saúde</span>
+            </label>
+            <div class="outro-box custom-check">
+              <input type="checkbox" id="outroObjCb" name="objetivo" value="Outro" />
+              <div class="check-ui"></div>
+              <span class="check-text">Outro:</span>
+              <input type="text" class="input-inline" id="outroObjText" placeholder="Digite..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label for="descObjetivo">Detalhe o seu objetivo principal *</label>
+          <textarea class="input-base textarea" id="descObjetivo" placeholder="Descreva o que exatamente você deseja alcançar e quais as suas maiores dificuldades hoje..." required></textarea>
+        </div>
+
+        <div class="field-group staggered">
+          <label for="prazoEvento">Existe algum prazo máximo ou evento? (Opcional)</label>
+          <input class="input-base" type="text" id="prazoEvento" placeholder="Casamento, viagem, verão..." />
+        </div>
+      </div>
+
+      <!-- ==================== STEP 3: HISTÓRICO ==================== -->
+      <div class="step-pane" id="step3">
+        <div class="pane-header staggered">
+          <h2>Seu treino e sua rotina</h2>
+          <p>Conte um pouco sobre a sua rotina e experiência com treinos.</p>
+        </div>
+
+<div class="field-group"><label for="diasDisponiveis">Quais dias você pode treinar? *</label><input class="input-base" id="diasDisponiveis" type="text" placeholder="Ex: segunda, quarta e sexta" required></div><div class="field-group"><label for="duracaoSessao">Tempo disponível por sessão (minutos) *</label><input class="input-base" id="duracaoSessao" type="number" placeholder="Ex: 60" min="5" max="300" step="1" required></div><div class="field-group"><label for="localTreino">Onde pretende treinar? *</label><input class="input-base" id="localTreino" type="text" placeholder="Ex: academia do bairro, condomínio ou casa" required></div><div id="onlineFields" hidden><div class="field-group"><label for="cidade">Cidade e estado *</label><input class="input-base" id="cidade" type="text" placeholder="Ex: Salvador, BA" required></div><div class="field-group"><label for="fusoHorario">Fuso horário, se diferente de Brasília</label><input class="input-base" id="fusoHorario" type="text" placeholder="Ex: uma hora a menos" ></div><div class="field-group"><label for="equipamentos">Quais equipamentos terá disponíveis? *</label><input class="input-base" id="equipamentos" type="text" placeholder="Ex: academia completa, halteres ou nenhum" required></div><div class="field-group"><label for="horarioContato">Melhores horários para contato *</label><input class="input-base" id="horarioContato" type="text" placeholder="Ex: dias úteis após as 18h" required></div></div><div id="presencialFields" hidden><div class="field-group"><label for="horarioPresencial">Horários disponíveis para as sessões *</label><input class="input-base" id="horarioPresencial" type="text" placeholder="Ex: segunda e quarta às 7h" required></div><p class="helper">A disponibilidade será combinada com Abel. O formulário não confirma um agendamento.</p></div><div class="field-group staggered">
+          <label>Você treina atualmente? *</label>
+          <div class="radio-pill-group">
+            <label class="pill">
+              <input type="radio" name="treinaAtual" value="Sim" />
+              <span class="pill-ui">Sim</span>
+            </label>
+            <label class="pill">
+              <input type="radio" name="treinaAtual" value="Não" />
+              <span class="pill-ui">Não</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid-2 staggered">
+          <div class="field-group">
+            <label for="tempoTreino">Há quanto tempo?</label>
+            <input class="input-base" type="text" id="tempoTreino" placeholder="Ex: 1 ano e meio" />
+          </div>
+          <div class="field-group">
+            <label for="freqTreino">Qual frequência?</label>
+            <input class="input-base" type="text" id="freqTreino" placeholder="Ex: 3x na semana" />
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label>Já fez acompanhamento profissional antes?</label>
+          <div class="radio-pill-group">
+            <label class="pill"><input type="radio" name="acompanhamento" value="Sim"><span class="pill-ui">Sim</span></label>
+            <label class="pill"><input type="radio" name="acompanhamento" value="Não"><span class="pill-ui">Não</span></label>
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label>Já possuiu ou possui alguma lesão? *</label>
+          <div class="radio-pill-group">
+            <label class="pill"><input type="radio" name="lesao" value="Sim"><span class="pill-ui">Sim</span></label>
+            <label class="pill"><input type="radio" name="lesao" value="Não"><span class="pill-ui">Não</span></label>
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label for="descLesao">Se sim, descreva a lesão:</label>
+          <textarea class="input-base textarea sm" id="descLesao" placeholder="Ex: Rompimento menisco em 2020..."></textarea>
+        </div>
+
+        <div class="field-group staggered">
+          <label for="exercicioDor">Tem algum exercício específico que você sinta incômodo?</label>
+          <input class="input-base" type="text" id="exercicioDor" placeholder="Ex: Agachamento incomoda o joelho" />
+        </div>
+      </div>
+
+      <!-- ==================== STEP 4: SAÚDE ==================== -->
+      <div class="step-pane" id="step4">
+        <div class="pane-header staggered">
+          <h2>Saúde & Finalização</h2>
+          <p>Conte os cuidados e as limitações que precisam ser considerados no seu acompanhamento.</p>
+        </div>
+
+        <div class="field-group staggered">
+          <label>Possui condições médicas/doenças diagnosticadas? *</label>
+          <div class="checkbox-list">
+            <label class="custom-check"><input type="checkbox" name="condicao" value="Problema na Coluna" /><div class="check-ui"></div><span class="check-text">Problema na Coluna</span></label>
+            <label class="custom-check"><input type="checkbox" name="condicao" value="Hipertensão" /><div class="check-ui"></div><span class="check-text">Hipertensão</span></label>
+            <label class="custom-check"><input type="checkbox" name="condicao" value="Diabetes" /><div class="check-ui"></div><span class="check-text">Diabetes</span></label>
+            <label class="custom-check"><input type="checkbox" name="condicao" value="Problema Cardíaco" /><div class="check-ui"></div><span class="check-text">Problema Cardíaco</span></label>
+            <label class="custom-check"><input type="checkbox" name="condicao" value="Nenhum" /><div class="check-ui"></div><span class="check-text">Nenhuma</span></label>
+            <div class="outro-box custom-check">
+              <input type="checkbox" id="outroSaudeCb" name="condicao" value="Outro" />
+              <div class="check-ui"></div>
+              <span class="check-text">Outro:</span>
+              <input type="text" class="input-inline" id="outroSaudeText" placeholder="Descreva" />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label for="medicamento">Usa medicamento controlado?</label>
+          <input class="input-base" type="text" id="medicamento" placeholder="Ex: Sim, metformina (ou Não)" />
+        </div>
+
+        <div class="field-group staggered">
+          <label>Sente dores físicas atualmente? *</label>
+          <div class="radio-pill-group">
+            <label class="pill"><input type="radio" name="senteDor" value="Sim"><span class="pill-ui">Sim</span></label>
+            <label class="pill"><input type="radio" name="senteDor" value="Não"><span class="pill-ui">Não</span></label>
+          </div>
+        </div>
+
+        <div class="grid-2 staggered">
+          <div class="field-group">
+            <label for="localDor">Qual lugar?</label>
+            <input class="input-base" type="text" id="localDor" placeholder="Ex: Lombar" />
+          </div>
+          <div class="field-group">
+            <label>Nível de dor (0-10)</label>
+            <div class="pain-wrap">
+              <input type="range" id="painScale" name="intensidadeDor" min="0" max="10" step="1" value="0">
+              <div class="pain-score" id="painVal">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label>Você possui liberação médica para treino? *</label>
+          <div class="radio-pill-group">
+            <label class="pill"><input type="radio" name="liberadoMedico" value="Sim"><span class="pill-ui">Sim</span></label>
+            <label class="pill"><input type="radio" name="liberadoMedico" value="Não"><span class="pill-ui">Não</span></label>
+            <label class="pill"><input type="radio" name="liberadoMedico" value="Não sei"><span class="pill-ui">Não sei</span></label>
+          </div>
+        </div>
+
+        <div class="field-group staggered">
+          <label for="observacoes">Algo mais que eu precise saber?</label>
+          <textarea class="input-base textarea sm" id="observacoes" placeholder="Algum detalhe relevante sobre sua saúde, gostos ou disponibilidade..."></textarea>
+        </div>
+      </div>
+
+      <section class="step-pane" id="step5"><div class="pane-header"><h2 tabindex="-1">Revise suas respostas</h2><p>Confira os dados abaixo. Você pode voltar a qualquer seção para corrigir.</p></div><div id="reviewContent"></div><p class="delivery-note" id="deliveryNote"></p></section>
+    </form>
+    
+    <!-- ESPAÇO NO FIM (compensar a bottom bar) -->
+    <div style="height: 120px;"></div>
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR (FLUTUANTE NO MOBILE) -->
+  <div class="bottom-nav">
+    <button type="button" class="btn btn-secondary" id="btnPrev" style="visibility: hidden;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Voltar
+    </button>
+    <div class="nav-indicator">
+      Passo <span id="lblStep">1</span> de 5
+    </div>
+    <button type="button" class="btn btn-primary" id="btnNext">
+      Avançar
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <!-- TELA DE SUCESSO -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-content">
+      <div class="icon-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <h2 id="successTitle" tabindex="-1">Ficha preparada</h2>
+      <p id="successMessage"></p><button class="btn btn-secondary" type="button" id="downloadAgain">Baixar ficha novamente</button>
+      
+      <a href="https://wa.me/5571996810310" class="btn btn-primary" style="margin-top:2rem;width:100%">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Combinar próximos passos no WhatsApp
+      </a>
+      <button type="button" class="restart-button" onclick="location.reload()">Preencher nova anamnese</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
